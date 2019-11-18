@@ -18,4 +18,6 @@ module load FastQC
 fastqc -t 10 /mnt/gs18/scratch/users/gomezcan/FinalExamBackup/RawData/RNAseq_SolanumL*.fastq.gz
 }
 
+Run the file using sbatch fastQ.sh
+Results are located within "/mnt/gs18/scratch/users/ranawee1/HRT891_final_prj"
 
