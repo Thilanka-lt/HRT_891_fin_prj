@@ -1,0 +1,21 @@
+### fastSQ is run to check the quality of the sequnces.
+
+Run this as a batch file for all 40 solanum_l SRR fastq.gz reads that are located in /mnt/gs18/scratch/users/gomezcan/FinalExamBackup/RawData/RNAseq_SolanumL
+
+Script
+{
+#!/bin/bash
+########## SBATCH Lines for Resource Request ##########
+#SBATCH --time=1:00:00    # Limit of wall clock time - how long the job will run
+#SBATCH --nodes=2        # Number of different nodes - could be an exact number or a range of nodes
+#SBATCH --ntasks=10          # Number of tasks - how many tasks (nodes) that you require
+#SBATCH --cpus-per-task=10        # Number of CPUs (or cores) per task
+#SBATCH --mem=1G                # Specify the real memory required per node.
+#SBATCH --job-name FastQC     # You can give your job a name for easier identification
+########## Load Modules #########
+module load FastQC
+########## Command Lines to Run ##########
+fastqc -t 10 /mnt/gs18/scratch/users/gomezcan/FinalExamBackup/RawData/RNAseq_SolanumL*.fastq.gz
+}
+
+
