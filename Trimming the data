@@ -1,0 +1,9 @@
+Trimming the data: A pre prosessing step
+Data trimming is a essential  step in analysing RNA seq. 
+We need to remove any adapter sequnces that might be present in the RNA sequnce reads.
+Also, we are pooling out the low quality bases from the sequnce reads.
+
+There are two ways that you can do.
+Fist One: Using a python script
+
+
