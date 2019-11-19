@@ -4,6 +4,7 @@ We need to remove any adapter sequnces that might be present in the RNA sequnce 
 Also, we are pooling out the low quality bases from the sequnce reads.
 
 There are two ways that you can do.
+
 Fist One: Using a python script
 Open nano
 {
@@ -36,5 +37,91 @@ fastq.qz using this
 
 Once you create the nano scrip called "fastq_trimmed.py"
 Run it on python
+fastq_trimmed.py ./ > fastp_trim.sh 
 
-                        
+The fastp_trim.sh  will look like this where it printed out the commond to run trimming step for each and every one of seq read.
+
+./fastp/fastp -i SRR8763843.fastq.gz -o trimmed_SRR8763843.fastq.gz
+./fastp/fastp -i SRR8763365.fastq.gz -o trimmed_SRR8763365.fastq.gz
+./fastp/fastp -i SRR8763374.fastq.gz -o trimmed_SRR8763374.fastq.gz
+./fastp/fastp -i SRR8763557.fastq.gz -o trimmed_SRR8763557.fastq.gz
+./fastp/fastp -i SRR8763364.fastq.gz -o trimmed_SRR8763364.fastq.gz
+./fastp/fastp -i SRR8763330.fastq.gz -o trimmed_SRR8763330.fastq.gz
+./fastp/fastp -i SRR8763465.fastq.gz -o trimmed_SRR8763465.fastq.gz
+./fastp/fastp -i SRR8763367.fastq.gz -o trimmed_SRR8763367.fastq.gz
+./fastp/fastp -i SRR8763366.fastq.gz -o trimmed_SRR8763366.fastq.gz
+./fastp/fastp -i SRR8763839.fastq.gz -o trimmed_SRR8763839.fastq.gz
+./fastp/fastp -i SRR8763332.fastq.gz -o trimmed_SRR8763332.fastq.gz
+./fastp/fastp -i SRR8763841.fastq.gz -o trimmed_SRR8763841.fastq.gz
+./fastp/fastp -i SRR8763463.fastq.gz -o trimmed_SRR8763463.fastq.gz
+./fastp/fastp -i SRR8763477.fastq.gz -o trimmed_SRR8763477.fastq.gz
+./fastp/fastp -i SRR8763842.fastq.gz -o trimmed_SRR8763842.fastq.gz
+./fastp/fastp -i SRR8763476.fastq.gz -o trimmed_SRR8763476.fastq.gz
+./fastp/fastp -i SRR8763555.fastq.gz -o trimmed_SRR8763555.fastq.gz
+./fastp/fastp -i SRR8763546.fastq.gz -o trimmed_SRR8763546.fastq.gz
+./fastp/fastp -i SRR8763464.fastq.gz -o trimmed_SRR8763464.fastq.gz
+./fastp/fastp -i SRR8763544.fastq.gz -o trimmed_SRR8763544.fastq.gz
+./fastp/fastp -i SRR8763547.fastq.gz -o trimmed_SRR8763547.fastq.gz
+./fastp/fastp -i SRR8763558.fastq.gz -o trimmed_SRR8763558.fastq.gz
+./fastp/fastp -i SRR8763545.fastq.gz -o trimmed_SRR8763545.fastq.gz
+./fastp/fastp -i SRR8763377.fastq.gz -o trimmed_SRR8763377.fastq.gz
+./fastp/fastp -i SRR8763475.fastq.gz -o trimmed_SRR8763475.fastq.gz
+./fastp/fastp -i SRR8763376.fastq.gz -o trimmed_SRR8763376.fastq.gz
+./fastp/fastp -i SRR8763548.fastq.gz -o trimmed_SRR8763548.fastq.gz
+./fastp/fastp -i SRR8763474.fastq.gz -o trimmed_SRR8763474.fastq.gz
+./fastp/fastp -i SRR8763466.fastq.gz -o trimmed_SRR8763466.fastq.gz
+./fastp/fastp -i SRR8763375.fastq.gz -o trimmed_SRR8763375.fastq.gz
+./fastp/fastp -i SRR8763378.fastq.gz -o trimmed_SRR8763378.fastq.gz
+./fastp/fastp -i SRR8763462.fastq.gz -o trimmed_SRR8763462.fastq.gz
+./fastp/fastp -i SRR8763556.fastq.gz -o trimmed_SRR8763556.fastq.gz
+./fastp/fastp -i SRR8763331.fastq.gz -o trimmed_SRR8763331.fastq.gz
+./fastp/fastp -i SRR8763559.fastq.gz -o trimmed_SRR8763559.fastq.gz
+./fastp/fastp -i SRR8763334.fastq.gz -o trimmed_SRR8763334.fastq.gz
+./fastp/fastp -i SRR8763840.fastq.gz -o trimmed_SRR8763840.fastq.gz
+./fastp/fastp -i SRR8763333.fastq.gz -o trimmed_SRR8763333.fastq.gz
+./fastp/fastp -i SRR8763363.fastq.gz -o trimmed_SRR8763363.fastq.gz
+./fastp/fastp -i SRR8763473.fastq.gz -o trimmed_SRR8763473.fastq.gz
+
+Then we can submit the job to HPCC using the script called qsub_slurm.py 
+
+python qsub_slurm.py -f submit -c fastp_trim.sh -u ranawee1 -m 10 -w 240 -wd ./ -p 4
+
+Scond one: Using the bash script
+
+If the reads are single ended
+
+#!/bin/bash
+########## BATCH Lines for Resource Request ##########
+#SBATCH --time=2:00:00          # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --nodes=1            # number of different nodes - could be an exact number or a range of nodes (same as -N)
+#SBATCH --ntasks=1             # number of tasks - how many tasks (nodes) that you require (same as -n)
+#SBATCH --cpus-per-task=2       # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem=2G               # Specify the real memory required per node. (20G)
+#SBATCH --job-name Fastp_paired       # you can give your job a name for easier identification (same as -J)
+########## Load Modules #########
+#module load FastQC
+########## Command Lines to Run #########
+for i in *_1.fastq.gz; do
+	file_1=$i;
+	./fastp/fastp -i $file_1 -o trimmed_$file_1;
+done;
+
+
+If the reads are paired ended
+#!/bin/bash
+########## BATCH Lines for Resource Request ##########
+#SBATCH --time=2:00:00          # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --nodes=1            # number of different nodes - could be an exact number or a range of nodes (same as -N)
+#SBATCH --ntasks=1             # number of tasks - how many tasks (nodes) that you require (same as -n)
+#SBATCH --cpus-per-task=2       # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem=2G               # Specify the real memory required per node. (20G)
+#SBATCH --job-name Fastp_paired       # you can give your job a name for easier identification (same as -J)
+########## Load Modules #########
+#module load FastQC
+########## Command Lines to Run #########
+for i in *_1.fastq.gz; do
+	file_1=$i;
+	file_2=${i//_1.fastq.gz/_2.fastq.gz};
+	./fastp/fastp -i $file_1 -I $file_2 -o trimmed_$file_1 -O trimmed_$file_2;
+done;
+
