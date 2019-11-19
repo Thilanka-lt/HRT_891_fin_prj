@@ -5,5 +5,34 @@ Also, we are pooling out the low quality bases from the sequnce reads.
 
 There are two ways that you can do.
 Fist One: Using a python script
+Open nano
+{
+import sys,os
+path = sys.argv[1]
+os.chdir(path)
+for root, dirs, files in os.walk(path):
+        for f in files:
+                if f.endswith("fastq.gz"):
+                        print("./fastp/fastp -i %s -o trimmed_%s"%(f,f))
 
 
+}
+
+{
+#modules to import
+import sys,os
+#print the current working directory and assign it to the path
+path = sys.argv[1]
+#
+os.chdir(path)
+#for loop that has thee parameters. root iterate on your root, dir iterate on your disrectories and files itearte on your files
+#So, when you run the file using python #nameOfTheScript.py you need to specify for these three parameters here for os.walk(path)
+for root, dirs, files in os.walk(path):
+        for f in files:
+#Snice there are files that are not fastq.gz our program is going to go over them. To avoid that we can ask to look at only the files ending with
+fastq.qz using this
+                if f.endswith("fastq.gz"):
+This will print out the outputs. we are using %s because we need to put variable(f) as a string
+                        print("./fastp/fastp -i %s -o trimmed_%s"%(f,f))
+                        }
+                        
