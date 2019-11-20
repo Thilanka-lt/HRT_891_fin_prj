@@ -1,0 +1,72 @@
+We used HISAT2 to carry out mapping
+(https://ccb.jhu.edu/software/hisat2/manual.shtml)
+
+1. Fist we need to decode the genome into file containing indexes.
+Because it is highly memory consiming to work with genome itself. Thus we carry out the indexing. Here we compress and transform 
+genome to small FM indexes (Full text indexes in minute space). Indexing helps to effectively find the sequnces patterns and it's occurance.
+FM indexing is a common stratergy when we work with large text files.
+(https://en.wikipedia.org/wiki/FM-index)
+{
+  nohup hisat2-build -p 5 ../Fasta_files/Medicago_truncatula.MedtrA17_4.0.dna.toplevel.fa Hisat2_index_Medicago_t &
+ 
+ }
+ 
+  nohup #### & is the command for running a job underneath
+  
+  -p - The -p option causes HISAT2 to launch a specified number of parallel search threads. 
+  then put the genome and then put the thred name. HISAT2 will automatically identify the number of indexes to be created .
+  
+  
+2. Then do the read mapping
+ Here we did the readmapping, outputting a .sam file. However this is also too big to be handeled. Thus we create a binary .bam file using samtools.
+ We can achive both jobs using the below script.
+ 
+ {
+ #!/bin/bash
+########## BATCH Lines for Resource Request ##########
+#SBATCH --time=2:00:00          # limit of wall clock time - how long the job will run (same as -t)
+#SBATCH --nodes=1            # number of different nodes - could be an exact number or a range of nodes (same as -N)
+#SBATCH --ntasks=1             # number of tasks - how many tasks (nodes) that you require (same as -n)
+#SBATCH --cpus-per-task=10       # number of CPUs (or cores) per task (same as -c)
+#SBATCH --mem=10G               # Specify the real memory required per node. (20G)
+#SBATCH --job-name Mapping_ATAC       # you can give your job a name for easier identification (same as -J)
+########## Load Modules #########
+module load hisat2
+module load SAMtools
+########## Command Lines to Run #########
+for i in *.fastq.gz; do         
+        nameout=${i//.fastq.gz/};
+        echo " ... Maping $nameout ..."
+        hisat2 -p 25 -x Hisat2_index_Solanum_l -U $i  -S $nameout.sam;
+        samtools view  --threads 10 -h -F 4 $nameout.sam | samtools --threads 10 -h -bS - | samtools sort  --threads 10 - -o $nameout.bam
+done;
+ }
+  
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
