@@ -22,7 +22,7 @@ FM indexing is a common stratergy when we work with large text files.
  We can achive both jobs using the below script.
  
  {
- #!/bin/bash
+#!/bin/bash
 ########## BATCH Lines for Resource Request ##########
 #SBATCH --time=2:00:00          # limit of wall clock time - how long the job will run (same as -t)
 #SBATCH --nodes=1            # number of different nodes - could be an exact number or a range of nodes (same as -N)
@@ -38,7 +38,7 @@ for i in *.fastq.gz; do
         nameout=${i//.fastq.gz/};
         echo " ... Maping $nameout ..."
         hisat2 -p 25 -x Hisat2_index_Solanum_l -U $i  -S $nameout.sam;
-        samtools view  --threads 10 -h -F 4 $nameout.sam | samtools --threads 10 -h -bS - | samtools sort  --threads 10 - -o $nameout.bam
+        samtools view  --threads 10 -h -F 4 $nameout.sam | samtools view --threads 10 -h -bS - | samtools sort  --threads 10 - -o $nameout.bam
 done;
  }
   
